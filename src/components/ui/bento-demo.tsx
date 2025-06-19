@@ -161,8 +161,19 @@ const features = [
 
 function BentoDemo() {
   return (
-    <div className="py-16 px-6">
+    <section className="py-20 px-6" style={{ backgroundColor: '#E8E5DB' }}>
       <div className="mx-auto max-w-7xl">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 md:text-4xl">
+            AI Features Built for Modern Classrooms
+          </h2>
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-caudex md:text-2xl">
+            From auto-generated lesson plans to adaptive assessments, everything you need to save time and teach smarter.
+          </p>
+        </div>
+
+        {/* Bento Grid */}
         <div 
           className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-4"
           style={{
@@ -174,7 +185,7 @@ function BentoDemo() {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

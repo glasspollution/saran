@@ -58,31 +58,30 @@ export default function HeroSection() {
                     <div className="relative pt-24">
                         <div className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--color-background)_75%)]"></div>
                         
-                        {/* Entropy component positioned in the right area */}
-                        <div className="absolute right-16 top-32 hidden lg:block xl:right-24">
-                            <AnimatedGroup
-                                variants={{
-                                    container: {
-                                        visible: {
-                                            transition: {
-                                                staggerChildren: 0.05,
-                                                delayChildren: 1,
+                        <div className="mx-auto max-w-5xl px-6 relative">
+                            {/* Entropy component positioned responsively */}
+                            <div className="absolute -right-6 -top-4 hidden lg:block xl:-right-12 2xl:-right-16">
+                                <AnimatedGroup
+                                    variants={{
+                                        container: {
+                                            visible: {
+                                                transition: {
+                                                    staggerChildren: 0.05,
+                                                    delayChildren: 1,
+                                                },
                                             },
                                         },
-                                    },
-                                    ...transitionVariants,
-                                }}>
-                                <div className="relative">
-                                    <Entropy 
-                                        size={350}
-                                        particleColor="#D97757"
-                                        className="rounded-lg opacity-100"
-                                    />
-                                </div>
-                            </AnimatedGroup>
-                        </div>
-
-                        <div className="mx-auto max-w-5xl px-6">
+                                        ...transitionVariants,
+                                    }}>
+                                    <div className="relative">
+                                        <Entropy 
+                                            size={350}
+                                            particleColor="#0015FF"
+                                            className="opacity-100"
+                                        />
+                                    </div>
+                                </AnimatedGroup>
+                            </div>
                             <div className="sm:mx-auto lg:mr-auto lg:mt-0">
                                 <div className="mt-8 max-w-2xl text-balance text-4xl font-bold md:text-5xl lg:mt-16">
                                     <TextEffect

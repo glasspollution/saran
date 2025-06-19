@@ -5,9 +5,10 @@ interface EntropyProps {
   className?: string
   size?: number
   particleColor?: string
+  style?: React.CSSProperties
 }
 
-export function Entropy({ className = "", size = 400, particleColor = '#D97757' }: EntropyProps) {
+export function Entropy({ className = "", size = 400, particleColor = '#D97757', style }: EntropyProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -180,7 +181,7 @@ export function Entropy({ className = "", size = 400, particleColor = '#D97757' 
   }, [size, particleColor])
 
   return (
-    <div className={`relative ${className}`} style={{ width: size, height: size }}>
+    <div className={`relative ${className}`} style={{ width: size, height: size, ...style }}>
       <canvas
         ref={canvasRef}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
