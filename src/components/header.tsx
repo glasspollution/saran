@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { useScroll } from 'motion/react'
+import { createClient } from '@/lib/client'
+import { useRouter } from 'next/navigation'
 
 const menuItems = [
     { name: 'Features', href: '#link' },
@@ -17,6 +19,9 @@ const menuItems = [
 export const HeroHeader = () => {
     const [menuState, setMenuState] = React.useState(false)
     const [scrolled, setScrolled] = React.useState(false)
+    const [user, setUser] = React.useState<any>(null)
+    const [loading, setLoading] = React.useState(true)
+    const router = useRouter()
 
     const { scrollYProgress } = useScroll()
 
@@ -26,6 +31,30 @@ export const HeroHeader = () => {
         })
         return () => unsubscribe()
     }, [scrollYProgress])
+
+    React.useEffect(() => {
+        const supabase = createClient()
+        
+        // Get initial user
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user)
+            setLoading(false)
+        })
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            setUser(session?.user ?? null)
+            setLoading(false)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [])
+
+    const handleLogout = async () => {
+        const supabase = createClient()
+        await supabase.auth.signOut()
+        router.push('/')
+    }
 
     return (
         <header>
@@ -80,21 +109,43 @@ export const HeroHeader = () => {
                                 </ul>
                             </div>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    size="sm">
-                                    <Link href="#">
-                                        <span>Login</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="sm">
-                                    <Link href="#">
-                                        <span>Sign Up</span>
-                                    </Link>
-                                </Button>
+                                {loading ? (
+                                    <div className="w-32 h-8 bg-gray-200 animate-pulse rounded" />
+                                ) : user ? (
+                                    <>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm">
+                                            <Link href="/protected">
+                                                <span>Protected</span>
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            onClick={handleLogout}
+                                            size="sm">
+                                            <span>Logout</span>
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm">
+                                            <Link href="/auth/login">
+                                                <span>Login</span>
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            asChild
+                                            size="sm">
+                                            <Link href="/auth/sign-up">
+                                                <span>Sign Up</span>
+                                            </Link>
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -7,6 +8,7 @@ import { HeroHeader } from './header'
 import { FlickeringGrid } from './flickering-grid-hero'
 import { Safari } from '@/components/magicui/safari'
 import { Entropy } from '@/components/ui/entropy'
+import { createClient } from '@/lib/client'
 
 const transitionVariants = {
     item: {
@@ -29,6 +31,27 @@ const transitionVariants = {
 }
 
 export default function HeroSection() {
+    const [user, setUser] = React.useState<any>(null)
+    const [loading, setLoading] = React.useState(true)
+
+    React.useEffect(() => {
+        const supabase = createClient()
+        
+        // Get initial user
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user)
+            setLoading(false)
+        })
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            setUser(session?.user ?? null)
+            setLoading(false)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [])
+
     return (
         <>
             <HeroHeader />
@@ -118,14 +141,27 @@ export default function HeroSection() {
                                     <div
                                         key={1}
                                         className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5">
-                                        <Button
-                                            asChild
-                                            size="lg"
-                                            className="rounded-xl px-5 text-base">
-                                            <Link href="#link">
-                                                <span className="text-nowrap">Start Teaching Smarter</span>
-                                            </Link>
-                                        </Button>
+                                        {loading ? (
+                                            <div className="w-48 h-11 bg-gray-200 animate-pulse rounded-xl" />
+                                        ) : user ? (
+                                            <Button
+                                                asChild
+                                                size="lg"
+                                                className="rounded-xl px-5 text-base">
+                                                <Link href="/protected">
+                                                    <span className="text-nowrap">Go to Protected</span>
+                                                </Link>
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                asChild
+                                                size="lg"
+                                                className="rounded-xl px-5 text-base">
+                                                <Link href="/auth/sign-up">
+                                                    <span className="text-nowrap">Start Teaching Smarter</span>
+                                                </Link>
+                                            </Button>
+                                        )}
                                     </div>
                                     <Button
                                         key={2}
