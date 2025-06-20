@@ -12,7 +12,6 @@ import { GridPattern } from "@/components/magicui/grid-pattern";
 import { Waves } from "@/components/bento/wave-background";
 import { Meteors } from "@/components/magicui/meteors";
 import { SplashCursor } from "@/components/ui/splash-cursor";
-import { MagnetLines } from "@/components/ui/magnet-lines";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 const features = [
@@ -113,16 +112,12 @@ const features = [
     href: "/",
     cta: "Learn more",
     background: (
-      <div className="absolute inset-0 overflow-hidden flex items-center justify-center">
-        <MagnetLines 
-          rows={9}
-          columns={9}
-          containerSize="100%"
-          lineColor="#6d5dfb"
-          lineWidth="0.8vmin"
-          lineHeight="5vmin"
-          baseAngle={0}
-          className="opacity-90"
+      <div className="absolute inset-0 overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-60 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/image-mesh-gradient (2).png')`
+          }}
         />
       </div>
     ),
