@@ -41,7 +41,7 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle className="text-2xl">Reset Your Password</CardTitle>
           <CardDescription>Please enter your new password below.</CardDescription>
@@ -58,10 +58,11 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  suppressHydrationWarning
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading} suppressHydrationWarning>
                 {isLoading ? 'Saving...' : 'Save new password'}
               </Button>
             </div>
