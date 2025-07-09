@@ -1,5 +1,5 @@
 import HeroSection from "@/components/hero-section";
-import { BentoDemo } from "@/components/ui/bento-demo";
+import { BentoDemoLazy } from "@/components/ui/bento-demo-lazy";
 import { FAQ } from "@/components/ui/faq-section";
 import Footer from "@/components/animated-footer";
 
@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <BentoDemo />
+      <BentoDemoLazy />
       <FAQ />
       <Footer 
         leftLinks={leftLinks}

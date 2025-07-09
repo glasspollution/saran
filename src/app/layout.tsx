@@ -5,13 +5,17 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"], // Reduced from 6 to 4 weights
+  display: 'swap', // Add font-display: swap for better performance
+  preload: true,
 });
 
 const caudex = Caudex({
   variable: "--font-caudex",
   subsets: ["latin"],
   weight: ["400", "700"],
+  display: 'swap', // Add font-display: swap for better performance
+  preload: false, // Only preload primary font
 });
 
 export const metadata: Metadata = {

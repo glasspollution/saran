@@ -7,7 +7,7 @@ import { AnimatedGroup } from '@/components/ui/animated-group'
 import { HeroHeader } from './header'
 import { FlickeringGrid } from './flickering-grid-hero'
 import { Safari } from '@/components/magicui/safari'
-import { Entropy } from '@/components/ui/entropy'
+import { EntropyLazy } from '@/components/ui/entropy-lazy'
 import { createClient } from '@/lib/client'
 
 const transitionVariants = {
@@ -97,7 +97,7 @@ export default function HeroSection() {
                                         ...transitionVariants,
                                     }}>
                                     <div className="relative">
-                                        <Entropy 
+                                        <EntropyLazy 
                                             size={350}
                                             particleColor="#0015FF"
                                             className="opacity-100"

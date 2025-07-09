@@ -1,4 +1,5 @@
 import MarqueeAlongSvgPath from "@/fancy/components/blocks/marquee-along-svg-path"
+import Image from 'next/image'
 
 const path =
   "M1 209.434C58.5872 255.935 387.926 325.938 482.583 209.434C600.905 63.8051 525.516 -43.2211 427.332 19.9613C329.149 83.1436 352.902 242.723 515.041 267.302C644.752 286.966 943.56 181.94 995 156.5"
@@ -27,11 +28,15 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               key={i}
               className="w-14 h-full hover:scale-150 duration-300 ease-in-out"
             >
-              <img
+              <Image
                 src={img.src}
                 alt={`Design ${i + 1}`}
+                width={56}
+                height={56}
                 className="w-full h-full object-cover rounded-lg shadow-md"
                 draggable={false}
+                priority={i < 3}
+                sizes="56px"
               />
             </div>
           ))}
