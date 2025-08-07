@@ -1,0 +1,133 @@
+# Troubleshooting Guide
+
+## Error: "next/headers only works in Server Components"
+
+### Symptoms
+- Error appears when loading pages with authentication
+- Build fails or runtime errors in browser
+- References to `createServerClient` in client code
+
+### Root Cause
+Client components importing server-side authentication functions
+
+### Solution
+1. Check all imports in client components (`'use client'` files)
+2. Replace `@/lib/auth-server` imports with `@/lib/auth-client`
+3. Clear build cache: `rm -rf .next`
+4. Restart development server
+
+### Prevention
+- Always use [src/lib/auth-client.ts](mdc:src/lib/auth-client.ts) in client components
+- Always use [src/lib/auth-server.ts](mdc:src/lib/auth-server.ts) in server components
+
+## Error: "infinite recursion detected in policy"
+
+### Symptoms
+- Database operations fail with recursion error
+- Profile creation/updates throw database errors
+- Supabase logs show policy recursion
+
+### Root Cause
+RLS policies that reference the same table they're protecting
+
+### Solution
+Run [sql/07_fix_rls_policies.sql](mdc:sql/07_fix_rls_policies.sql) to reset to simple policies
+
+### Prevention
+Keep RLS policies simple: `auth.uid() = id` pattern only
+
+## Error: "User not authenticated"
+
+### Symptoms
+- Profile operations fail immediately
+- No user session found
+- Auth functions return null user
+
+### Diagnosis Steps
+1. Add [src/components/supabase-test.tsx](mdc:src/components/supabase-test.tsx) to page
+2. Check browser console for detailed logs
+3. Verify environment variables are correct
+4. Check Supabase project is active
+
+### Common Causes
+- Wrong environment variables (old project)
+- Network connection issues
+- User session expired
+- Supabase project inactive
+
+## Error: "Failed to fetch"
+
+### Symptoms
+- Supabase requests failing
+- Network errors in browser console
+- Auth operations timeout
+
+### Solution
+1. Verify `NEXT_PUBLIC_SUPABASE_URL` is correct
+2. Check Supabase project status
+3. Verify API keys are valid
+4. Test connection with diagnostic component
+
+## Database Setup Issues
+
+### When user_profiles table doesn't exist
+Run [fresh_supabase_setup.sql](mdc:fresh_supabase_setup.sql) in Supabase SQL Editor
+
+### When enum type conflicts occur
+Use `DO $$ BEGIN...EXCEPTION` blocks for safe enum creation
+
+### When permissions are denied
+Ensure proper grants:
+```sql
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT ALL ON user_profiles TO authenticated;
+GRANT USAGE ON TYPE user_role TO authenticated;
+```
+
+## Profile Setup Not Working
+
+### Symptoms
+- Users stuck on profile setup page
+- Form submission fails
+- No redirect after completion
+
+### Debug Steps
+1. Open browser dev tools console
+2. Check for error messages during form submission
+3. Verify database connection with test component
+4. Check RLS policies are not recursive
+
+### Common Fixes
+- Reset RLS policies to simple versions
+- Verify user authentication before profile operations
+- Check form validation logic
+
+## Route Protection Issues
+
+### When users access wrong role pages
+Check [src/lib/middleware.ts](mdc:src/lib/middleware.ts) configuration:
+- Role-based route patterns
+- Redirect logic
+- Profile existence checks
+
+### When middleware doesn't redirect
+- Ensure middleware is properly configured in [src/middleware.ts](mdc:src/middleware.ts)
+- Check route matcher patterns
+- Verify profile data structure
+
+## Cache-Related Issues
+
+### When changes don't appear
+1. Clear Next.js cache: `rm -rf .next`
+2. Hard refresh browser (Ctrl+F5)
+3. Clear browser localStorage/sessionStorage
+4. Restart development server
+
+### When imports still fail after fixes
+- Delete node_modules and reinstall
+- Check TypeScript compilation
+- Verify file paths are correct
+description:
+globs:
+alwaysApply: false
+---

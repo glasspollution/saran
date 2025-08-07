@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+
+here are the things i want you to keep in context:
+1. the dashboard must have a sidebar for navigation
+2. everytime any changes are made to the ui of dashboard make sure it is not static and is fetched from backend (for backend im using supabase).
+3. security is top most priorityhere are the things i want you to keep in context:
+1. the dashboard must have a sidebar for navigation
+2. everytime any changes are made to the ui of dashboard make sure it is not static and is fetched from backend (for backend im using supabase).
+3. security is top most priority

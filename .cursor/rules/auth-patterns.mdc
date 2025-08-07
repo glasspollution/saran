@@ -1,0 +1,85 @@
+# Authentication Patterns & Best Practices
+
+## File Organization Pattern
+
+### Client-Side Auth
+**File**: [src/lib/auth-client.ts](mdc:src/lib/auth-client.ts)
+**Usage**: Client components, browser-side operations
+**Imports**: Only `@/lib/client` (never `@/lib/server`)
+
+```typescript
+// ✅ Correct client-side pattern
+'use client'
+import { upsertUserProfile } from '@/lib/auth-client'
+```
+
+### Server-Side Auth  
+**File**: [src/lib/auth-server.ts](mdc:src/lib/auth-server.ts)
+**Usage**: Server components, API routes, middleware
+**Imports**: Only `@/lib/server` 
+
+```typescript
+// ✅ Correct server-side pattern
+import { getUserProfile } from '@/lib/auth-server'
+```
+
+## Common Mistakes & Fixes
+
+### ❌ NEVER DO: Mix Server Imports in Client
+```typescript
+// ❌ This breaks - causes "next/headers" error
+'use client'
+import { getUserProfile } from '@/lib/auth' // if this imports server functions
+```
+
+### ❌ NEVER DO: Use Client Functions in Server
+```typescript
+// ❌ This won't work properly in server components
+import { getUserProfile } from '@/lib/auth-client'
+```
+
+## Component Patterns
+
+### Client Components
+- Use `'use client'` directive
+- Import from `@/lib/auth-client`
+- Handle user interactions, forms
+- Examples: [src/components/setup-profile-form.tsx](mdc:src/components/setup-profile-form.tsx)
+
+### Server Components  
+- No `'use client'` directive
+- Import from `@/lib/auth-server`
+- Handle initial data loading, redirects
+- Examples: [src/app/teacher/dashboard/page.tsx](mdc:src/app/teacher/dashboard/page.tsx)
+
+## Debugging Patterns
+
+### When You See "next/headers" Error
+1. Check imports in client components
+2. Ensure no server auth functions are imported
+3. Clear `.next` cache: `rm -rf .next`
+4. Restart dev server
+
+### When Authentication Fails
+1. Check environment variables are set
+2. Use [src/components/supabase-test.tsx](mdc:src/components/supabase-test.tsx) for diagnosis
+3. Check browser network tab for Supabase requests
+4. Verify user session exists
+
+## Route Protection Pattern
+[src/lib/middleware.ts](mdc:src/lib/middleware.ts) handles:
+- Authentication checks
+- Role-based redirects  
+- Profile completion verification
+- Route access control
+
+## Profile Creation Pattern
+Manual creation via forms (not triggers):
+1. User completes [src/components/setup-profile-form.tsx](mdc:src/components/setup-profile-form.tsx)
+2. Form calls `upsertUserProfile()` from client auth
+3. Success → redirect to role dashboard
+4. Failure → show error with debugging info
+description:
+globs:
+alwaysApply: false
+---

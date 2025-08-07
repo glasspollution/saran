@@ -19,7 +19,7 @@ export default function Home() {
   ];
 
   return (
-    <>
+    <div className="home-background min-h-screen">
       <HeroSection />
       <BentoDemo />
       <FAQ />
@@ -29,6 +29,6 @@ export default function Home() {
         copyrightText="© 2024 Tailark. All rights reserved."
         barCount={25}
       />
-    </>
+    </div>
   );
 }

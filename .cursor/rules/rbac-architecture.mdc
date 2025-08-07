@@ -1,0 +1,58 @@
+# RBAC Architecture Guide
+
+## Project Overview
+This is an AI-powered educational platform with role-based access control for teachers and students. The system uses Supabase for backend and Next.js App Router for frontend.
+
+## Authentication & Authorization Structure
+
+### Key Files
+- [src/lib/client.ts](mdc:src/lib/client.ts) - Browser Supabase client (client-side only)
+- [src/lib/server.ts](mdc:src/lib/server.ts) - Server Supabase client (server components only)
+- [src/lib/auth-client.ts](mdc:src/lib/auth-client.ts) - Client-side auth utilities
+- [src/lib/auth-server.ts](mdc:src/lib/auth-server.ts) - Server-side auth utilities
+- [src/lib/middleware.ts](mdc:src/lib/middleware.ts) - Route protection logic
+- [src/middleware.ts](mdc:src/middleware.ts) - Next.js middleware entry point
+
+### Critical Rule: NEVER mix server and client auth
+- Client components MUST use `@/lib/auth-client`
+- Server components MUST use `@/lib/auth-server`
+- Mixing these causes "next/headers only works in Server Components" errors
+
+## Database Schema
+
+### User Roles
+- `user_role` enum: 'teacher' | 'student'
+- Stored in [fresh_supabase_setup.sql](mdc:fresh_supabase_setup.sql)
+
+### user_profiles Table Structure
+```sql
+- id (UUID, references auth.users)
+- email (TEXT)
+- full_name (TEXT)
+- role (user_role, default 'student')
+- school_name (TEXT, optional)
+- grade_level (TEXT, for students)
+- subject_specialization (TEXT, for teachers)
+- created_at/updated_at (TIMESTAMP)
+```
+
+## Authentication Flow
+1. Signup → Email confirmation → Login
+2. Login → Check profile exists via middleware
+3. No profile → Redirect to [src/app/auth/setup-profile/page.tsx](mdc:src/app/auth/setup-profile/page.tsx)
+4. Profile complete → Redirect to role-specific dashboard
+
+## Route Protection
+- Teachers: `/teacher/*`, `/dashboard/teacher`
+- Students: `/student/*`, `/dashboard/student`
+- Protected: `/protected` (redirects to role dashboard)
+
+## Key Lessons Learned
+1. Start with fresh Supabase project to avoid legacy conflicts
+2. Keep RLS policies simple to avoid infinite recursion
+3. Manual profile creation > automatic triggers for better UX
+4. Always clear `.next` cache when changing auth structure
+description:
+globs:
+alwaysApply: false
+---

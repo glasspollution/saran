@@ -15,7 +15,7 @@ const caudex = Caudex({
 });
 
 export const metadata: Metadata = {
-  title: "AI Academic Platform - Transform Teaching with AI",
+  title: "avilrn",
   description: "AI-powered academic platform for K-12 schools. Transform curriculum input into comprehensive lesson plans, revision materials, and assessments through our chat-based interface.",
 };
 

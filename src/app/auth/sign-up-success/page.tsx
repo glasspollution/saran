@@ -18,8 +18,8 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              You&apos;ve successfully signed up. Please check your email to confirm your account
-              before signing in.
+              You&apos;ve successfully signed up. Please check your email to confirm your account.
+              After confirmation, you&apos;ll be able to complete your profile setup and choose your role (teacher or student).
             </p>
           </CardContent>
         </Card>

@@ -1,0 +1,74 @@
+# Supabase Database Setup Guide
+
+## Working Database Setup
+Use [fresh_supabase_setup.sql](mdc:fresh_supabase_setup.sql) for new projects. This script includes:
+- user_role enum creation
+- user_profiles table with proper constraints
+- Simple, non-recursive RLS policies
+- Performance indexes
+- Proper permissions
+
+## RLS Policy Rules
+
+### ✅ What WORKS
+```sql
+-- Simple, direct policies
+CREATE POLICY "user_profiles_select_policy" ON user_profiles
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "user_profiles_insert_policy" ON user_profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "user_profiles_update_policy" ON user_profiles
+  FOR UPDATE USING (auth.uid() = id);
+```
+
+### ❌ What FAILS (Infinite Recursion)
+```sql
+-- Complex policies that reference the same table
+CREATE POLICY "Teachers can view student profiles" ON user_profiles
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles teacher_profile  -- ❌ Recursive reference
+      WHERE teacher_profile.id = auth.uid() 
+      AND teacher_profile.role = 'teacher'
+    ) AND role = 'student'
+  );
+```
+
+## Common Issues & Solutions
+
+### Issue: "infinite recursion detected in policy"
+**Cause**: RLS policy references the same table it's protecting
+**Solution**: Use [sql/07_fix_rls_policies.sql](mdc:sql/07_fix_rls_policies.sql) to reset policies
+
+### Issue: "type user_role already exists"
+**Cause**: Enum type from previous setup attempts
+**Solution**: Use `DO $$ BEGIN...EXCEPTION` blocks for safe creation
+
+### Issue: Permission denied
+**Cause**: Missing grants for authenticated users
+**Solution**: Ensure these grants exist:
+```sql
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT ALL ON user_profiles TO authenticated;
+GRANT USAGE ON TYPE user_role TO authenticated;
+```
+
+## Testing Database Setup
+Use diagnostic scripts:
+- [sql/00_debug_check.sql](mdc:sql/00_debug_check.sql) - Check what exists
+- [sql/04_comprehensive_diagnosis.sql](mdc:sql/04_comprehensive_diagnosis.sql) - Full system check
+
+## Environment Variables Required
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
+
+## Manual Profile Creation Approach
+We use manual profile creation via [src/components/setup-profile-form.tsx](mdc:src/components/setup-profile-form.tsx) instead of database triggers for better reliability and UX.
+description:
+globs:
+alwaysApply: false
+---

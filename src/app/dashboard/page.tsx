@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/server'
 import { getUserProfile } from '@/lib/auth-server'
 
-export default async function ProtectedPage() {
+export default async function DashboardPage() {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
@@ -10,14 +10,18 @@ export default async function ProtectedPage() {
     redirect('/auth/login')
   }
 
-  // Get user profile to determine where to redirect
   const profile = await getUserProfile(data.user.id)
-  
-  if (!profile || !profile.role) {
+  if (!profile) {
     redirect('/auth/setup-profile')
   }
 
   // Redirect to role-specific dashboard
-  const dashboardPath = profile.role === 'teacher' ? '/dashboard/teacher' : '/dashboard/student'
-  redirect(dashboardPath)
-}
+  if (profile.role === 'teacher') {
+    redirect('/dashboard/teacher')
+  } else if (profile.role === 'student') {
+    redirect('/dashboard/student')
+  }
+
+  // Fallback redirect
+  redirect('/auth/setup-profile')
+} 
